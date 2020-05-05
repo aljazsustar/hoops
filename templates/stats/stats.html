@@ -1,0 +1,46 @@
+{% extends 'index/index.html' %}
+{% load mathfilters %}
+{% block content %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-6">
+                <table class="table table-hover">
+                    <thead>
+                    <th>Practice date</th>
+                    <th>Shots made</th>
+                    <th>Shots attempted</th>
+                    <th>%</th>
+                    <th></th>
+                    </thead>
+                    <tbody>
+                    {% for s in stats %}
+                        <tr>
+                            <td>{{ s.practice.date }}</td>
+                            <td>{{ s.total_made }}</td>
+                            <td>{{ s.total_shots }}</td>
+                            <td>{{ s.total_made|div:s.total_shots|mul:100 }} %</td>
+                            <td><a href="{% url 'hoops:practice_detail' s.practice.id %}">Edit</a></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-6">
+                <canvas id="basic-chart"></canvas>
+            </div>
+        </div>
+    </div>>
+    <script>
+        const config = {
+            type: 'bar',
+            data: {{ data|safe }}
+        }
+
+        window.onload = () => {
+            console.log("hey")
+            const ctx = document.getElementById("basic-chart").getContext('2d');
+            window.basic_chart = new Chart(ctx, config)
+        }
+
+    </script>
+{% endblock %}

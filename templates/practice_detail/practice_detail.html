@@ -1,0 +1,30 @@
+{% extends 'index/index.html' %}
+{% load widget_tweaks %}
+{% block content %}
+    <div class="container d-flex justify-content-center">
+        <div class="col-4">
+            <form action="{% url 'hoops:update_practice' practice.pk %}" method="post">
+                {% csrf_token %}
+                {% for field in practice_form %}
+                    <div class="form-group">
+                    {{ field.label_tag }}
+                    {{ field|add_class:'form-control' }}
+                    {% for e in field.errors %}
+                        <div class="text-danger">{{ e }}</div>
+                    {% endfor %}
+                {% endfor %}
+                </div>
+                {% for field in form %}
+                    <div class="form-group">
+                        {{ field.label_tag }}
+                        {{ field|add_class:'form-control' }}
+                        {% for e in field.errors %}
+                            <div class="text-danger">{{ e }}</div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-sm btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
