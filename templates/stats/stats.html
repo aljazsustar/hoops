@@ -26,19 +26,47 @@
                 </table>
             </div>
             <div class="col-6">
-                <canvas id="basic-chart"></canvas>
+                <div id="basic_chart"></div>
             </div>
         </div>
-    </div>
+    </div>>
     <script>
-        const config = {
-            type: 'bar',
-            data: [{{ data|safe }}]
+        var config = {
+            chart: {
+                type: 'line',
+                width: 700,
+                height: 300
+            },
+            series: [{
+                data: {{ data|safe }}
+            }],
+            xaxis: {
+                type: 'datetime'
+            },
+            toolbar: {
+                show: false
+            },
+            legend: {
+                position: 'top',
+                horizontalAlign: 'left',
+                floating: true,
+                offsetY: -25,
+                offsetX: -5
+            },
+            title: {
+                text: 'Shots made over time',
+                align: 'left'
+            },
+            dataLabels: {
+                enabled: true,
+            },
         }
 
         window.onload = () => {
-            const ctx = document.getElementById("basic-chart").getContext('2d');
-            window.basic_chart = new Chart(ctx, config)
+            console.log(config.series)
+            const ctx = document.getElementById('basic_chart');
+            var basic_chart = new ApexCharts(ctx, config)
+            basic_chart.render()
         }
 
     </script>
