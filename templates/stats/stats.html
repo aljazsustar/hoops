@@ -26,7 +26,14 @@
                 </table>
             </div>
             <div class="col-6">
-                <div id="basic_chart"></div>
+                <div id="basic_chart" class="pb-4 mb-4"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6"></div>
+            <div class="col-6">
+                <div id="log-chart">
+                </div>
             </div>
         </div>
     </div>>
@@ -34,12 +41,25 @@
         var config = {
             chart: {
                 type: 'line',
-                width: 700,
                 height: 300
             },
-            series: [{
-                data: {{ data|safe }}
-            }],
+            grid: {
+                padding: {
+                    bottom: 10
+                }
+            },
+            stroke:{
+              curve: 'straight'
+            },
+            series: [
+                {
+                    name: 'Linear',
+                    data: {{ data|safe }}
+                },
+                {
+                    name: 'Logarithmic',
+                    data: {{ data|safe }}
+                }],
             xaxis: {
                 type: 'datetime'
             },
@@ -47,11 +67,9 @@
                 show: false
             },
             legend: {
-                position: 'top',
-                horizontalAlign: 'left',
-                floating: true,
-                offsetY: -25,
-                offsetX: -5
+                position: 'bottom',
+                verticalAlign: 'left',
+                floating: false,
             },
             title: {
                 text: 'Shots made over time',
@@ -60,6 +78,22 @@
             dataLabels: {
                 enabled: true,
             },
+            yaxis: [
+                {
+                    min: 1,
+                    max: 100,
+                    tickAmount: 10,
+                    seriesName: 'Logarithmic',
+                    logarithmic: true
+                },
+                {
+                    min: 1,
+                    max: 100,
+                    tickAmount: 10,
+                    seriesName: 'Linear',
+                    opposite: true
+                }
+            ],
         }
 
         window.onload = () => {
