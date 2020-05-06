@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '&m0k^ab3&&7pc$4t3zkx0t1(73%=0q24$932-@hulve)j8c07d'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['157.230.114.25', 'www.smart-hoops.com', 'smart-hoops.com']
 
