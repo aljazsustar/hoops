@@ -50,7 +50,7 @@ def stats(request):
     for stat in s:
         date = stat.practice.date
         shots_data.append({
-            'x': date.__str__,
+            'x': date.__str__(),
             'y': stat.total_made
         })
     return render(request, '../templates/stats/stats.html', {'stats': s, 'data': shots_data})
