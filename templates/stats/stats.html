@@ -33,11 +33,10 @@
     <script>
         const config = {
             type: 'bar',
-            data: {{ data|safe }}
+            data: [{{ data|safe }}]
         }
 
         window.onload = () => {
-            console.log("hey")
             const ctx = document.getElementById("basic-chart").getContext('2d');
             window.basic_chart = new Chart(ctx, config)
         }
