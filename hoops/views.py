@@ -3,11 +3,18 @@ from . import forms
 from .models import Attempt, Practice, BasicStats, WeatherConditions
 from .openweather import Weather
 from django.utils import timezone
-from datetime import datetime
 
 
 def index(request):
-    return render(request, '../templates/index/index.html')
+    practices = Practice.objects.all()
+    basic_stats = []
+    for p in practices:
+        stat = BasicStats.objects.get(practice_id=p.id)
+        weather = WeatherConditions.objects.get(practice_id=p.id) if WeatherConditions.objects.filter(
+            practice_id=p.id).exists() else None
+        basic_stats.append({'practice': p, 'basic_stats': stat, 'weather': weather})
+        print(weather)
+    return render(request, '../templates/index/index.html', {'stats': basic_stats})
 
 
 def practice(request):
@@ -50,7 +57,7 @@ def practice(request):
 
 
 def stats(request):
-    s = BasicStats.objects.all()
+    s = BasicStats.objects.all().order_by('practice__date')
     shots_data = []
 
     for stat in s:
