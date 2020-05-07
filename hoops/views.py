@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from . import forms
-from .models import Attempt, Practice, BasicStats
+from .models import Attempt, Practice, BasicStats, WeatherConditions
+from .openweather import Weather
 from django.utils import timezone
 from datetime import datetime
 
@@ -31,6 +32,11 @@ def practice(request):
                 new_practice.save()
                 BasicStats(total_made=successful, total_shots=attempts, practice=new_practice).save()
                 new_attempt.practice = new_practice
+                conditions = Weather(location='ljubljana').get_current_conditions()
+                weather = WeatherConditions(temperature=conditions['temp'], wind_speed=conditions['wind_speed'],
+                                            conditions=conditions['conditions'], humidity=conditions['humidity'],
+                                            practice=new_practice)
+                weather.save()
             else:
                 new_attempt.practice = practices[0]
                 bs = basic_stats[0]
@@ -68,7 +74,6 @@ def practice_detail(request, pk):
 
 
 def update_practice(request, pk):
-
     if request.method == 'POST':
         attempts_form = forms.PracticeForm(request.POST)
         practice_form = forms.EditPracticeForm(request.POST)

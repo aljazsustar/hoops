@@ -16,3 +16,11 @@ class BasicStats(models.Model):
     practice = models.ForeignKey(Practice, on_delete=models.CASCADE)
     total_shots = models.PositiveIntegerField()
     total_made = models.PositiveIntegerField()
+
+
+class WeatherConditions(models.Model):
+    temperature = models.IntegerField()
+    wind_speed = models.IntegerField()
+    conditions = models.CharField(max_length=127)
+    humidity = models.IntegerField()
+    practice = models.ForeignKey(Practice, on_delete=models.CASCADE, default=1)
