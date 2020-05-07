@@ -93,3 +93,9 @@ def update_practice(request, pk):
             p.date = date
             p.save()
     return redirect('/stats')
+
+
+def delete_practice(request, pk):
+    to_delete = Practice.objects.get(id=pk)
+    to_delete.delete()
+    return redirect('/stats')
