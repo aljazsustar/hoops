@@ -12,3 +12,9 @@ class EditPracticeForm(ModelForm):
     class Meta:
         model = Practice
         fields = ['date']
+
+
+class EditAttemptForm(ModelForm):
+    class Meta:
+        model = Attempt
+        fields = ['attempts_successful', 'attempts']
