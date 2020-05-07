@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from . import forms
-from .models import Attempt, Practice, BasicStats, WeatherConditions
+from .models import Attempt, Practice, BasicStats, WeatherConditions, recalculate_basic_stats
 from .openweather import Weather
 from django.utils import timezone
 
@@ -71,32 +71,22 @@ def stats(request):
 
 def practice_detail(request, pk):
     p = get_object_or_404(Practice, pk=pk)
-    b_raw = BasicStats.objects.filter(practice_id=pk)
-    basic_stats = b_raw[0]
+    basic_stats = BasicStats.objects.get(practice_id=pk)
+    attempts = Attempt.objects.filter(practice_id=pk)
     form = forms.PracticeForm(initial={'total_shots': basic_stats.total_shots, 'total_made': basic_stats.total_made})
     practice_form = forms.EditPracticeForm(initial={'date': p.date})
     return render(request, '../templates/practice_detail/practice_detail.html',
                   {'form': form, 'practice_form': practice_form,
-                   'practice': p})
+                   'practice': p, 'basic_stats': basic_stats, 'attempts': attempts})
 
 
 def update_practice(request, pk):
     if request.method == 'POST':
-        attempts_form = forms.PracticeForm(request.POST)
         practice_form = forms.EditPracticeForm(request.POST)
 
-        if attempts_form.is_valid() and practice_form.is_valid():
+        if practice_form.is_valid():
             p = get_object_or_404(Practice, pk=pk)
-            shots_made = attempts_form.cleaned_data['total_made']
-            shots_total = attempts_form.cleaned_data['total_shots']
             date = practice_form.cleaned_data['date']
-            basic_stats_raw = BasicStats.objects.filter(practice_id=p.id)
-
-            basic_stats = basic_stats_raw[0]
-            basic_stats.total_shots = shots_total
-            basic_stats.total_made = shots_made
-            basic_stats.save()
-
             p.date = date
             p.save()
     return redirect('/stats')
@@ -106,3 +96,21 @@ def delete_practice(request, pk):
     to_delete = Practice.objects.get(id=pk)
     to_delete.delete()
     return redirect('/stats')
+
+
+def edit_attempt(request, pk):
+    attempt = get_object_or_404(Attempt, pk=pk)
+
+    if request.method == 'POST':
+        form = forms.EditAttemptForm(request.POST)
+        if form.is_valid():
+            attempts = form.cleaned_data['attempts']
+            attempts_successful = form.cleaned_data['attempts_successful']
+            attempt.attempts_successful = attempts_successful
+            attempt.attempts = attempts
+            attempt.save()
+            recalculate_basic_stats(attempt.practice.pk)
+            return redirect('/')
+
+    form = forms.EditAttemptForm(initial={'attempts': attempt.attempts, 'attempts_successful': attempt.attempts_successful})
+    return render(request, 'attempt/edit_attempt.html', {'form': form, 'attempt': attempt})

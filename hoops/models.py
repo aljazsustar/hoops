@@ -24,3 +24,17 @@ class WeatherConditions(models.Model):
     conditions = models.CharField(max_length=127)
     humidity = models.IntegerField()
     practice = models.ForeignKey(Practice, on_delete=models.CASCADE, default=1)
+
+
+def recalculate_basic_stats(practice_id):
+    basic_stats = BasicStats.objects.get(practice_id=practice_id)
+    attempts = Attempt.objects.filter(practice_id=practice_id)
+    total_made = 0
+    total_shots = 0
+    for a in attempts:
+        total_made += a.attempts_successful
+        total_shots += a.attempts
+
+    basic_stats.total_made = total_made
+    basic_stats.total_shots = total_shots
+    basic_stats.save()
