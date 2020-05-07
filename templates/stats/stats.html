@@ -19,7 +19,10 @@
                             <td>{{ s.total_made }}</td>
                             <td>{{ s.total_shots }}</td>
                             <td>{{ s.total_made|div:s.total_shots|mul:100 }} %</td>
-                            <td><a href="{% url 'hoops:practice_detail' s.practice.id %}">Edit</a></td>
+                            <td><a href="{% url 'hoops:practice_detail' s.practice.id %}">Edit</a>
+                                <a class="fa fa-times ml-2" aria-hidden="true"
+                                   href="{% url 'hoops:delete_practice' s.practice.id %}" style="color: black"></a>
+                            </td>
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -38,7 +41,7 @@
         </div>
     </div>>
     <script>
-        var config = {
+        const config = {
             chart: {
                 type: 'line',
                 height: 300
@@ -48,8 +51,8 @@
                     bottom: 10
                 }
             },
-            stroke:{
-              curve: 'straight'
+            stroke: {
+                curve: 'straight'
             },
             series: [
                 {
@@ -99,7 +102,7 @@
         window.onload = () => {
             console.log(config.series)
             const ctx = document.getElementById('basic_chart');
-            var basic_chart = new ApexCharts(ctx, config)
+            const basic_chart = new ApexCharts(ctx, config)
             basic_chart.render()
         }
 
