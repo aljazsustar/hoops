@@ -1,9 +1,11 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 
 class Practice(models.Model):
     date = models.DateField(default=timezone.now().date())
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
 class Attempt(models.Model):
