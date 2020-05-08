@@ -1,0 +1,23 @@
+{% extends 'index/index.html' %}
+{% load widget_tweaks %}
+{% block content %}
+    <div class="container d-flex justify-content-center">
+        <div class="col-4">
+            <form method="post" action="/login/">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="form-group">
+                        {{ field.label_tag }}
+                        {{ field|add_class:'form-control' }}
+                        {% for e in field.errors %}
+                            <div class="text-danger">{{ e }}</div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-sm btn-primary">Submit</button>
+            </form>
+            <br>
+            <p class="h6">If you don't already have an account, <a href="/register"><strong>register</strong></a></p>
+        </div>
+    </div>
+{% endblock %}

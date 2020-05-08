@@ -3,10 +3,14 @@ from . import forms
 from .models import Attempt, Practice, BasicStats, WeatherConditions, recalculate_basic_stats
 from .openweather import Weather
 from django.utils import timezone
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.decorators import login_required
 
 
+@login_required(login_url='/login')
 def index(request):
-    practices = Practice.objects.all()
+    practices = Practice.objects.filter(user_id=request.user.id)
     basic_stats = []
     for p in practices:
         stat = BasicStats.objects.get(practice_id=p.id)
@@ -17,8 +21,9 @@ def index(request):
     return render(request, '../templates/index/index.html', {'stats': basic_stats})
 
 
+@login_required(login_url='/login')
 def practice(request):
-    practices = Practice.objects.order_by('-date')[:1]
+    practices = Practice.objects.filter(user_id=request.user.id).order_by('-date')[:1]
     basic_stats = BasicStats.objects.order_by('-practice__date')[:1]
 
     if request.method == 'POST':
@@ -56,8 +61,9 @@ def practice(request):
     return render(request, '../templates/practice/practice.html', {'form': form})
 
 
+@login_required(login_url='/login')
 def stats(request):
-    s = BasicStats.objects.all().order_by('practice__date')
+    s = BasicStats.objects.filter(practice__user_id=request.user.id).order_by('practice__date')
     shots_data = []
 
     for stat in s:
@@ -69,6 +75,7 @@ def stats(request):
     return render(request, '../templates/stats/stats.html', {'stats': s, 'data': shots_data})
 
 
+@login_required(login_url='/login')
 def practice_detail(request, pk):
     p = get_object_or_404(Practice, pk=pk)
     basic_stats = BasicStats.objects.get(practice_id=pk)
@@ -86,6 +93,7 @@ def practice_detail(request, pk):
                    'practice': p, 'basic_stats': basic_stats, 'attempts': attempts, 'js_data': js_data})
 
 
+@login_required(login_url='/login')
 def update_practice(request, pk):
     if request.method == 'POST':
         practice_form = forms.EditPracticeForm(request.POST)
@@ -98,12 +106,14 @@ def update_practice(request, pk):
     return redirect('/stats')
 
 
+@login_required(login_url='/login')
 def delete_practice(request, pk):
-    to_delete = Practice.objects.get(id=pk)
+    to_delete = Practice.objects.get(id=pk, user_id=request.user.id)
     to_delete.delete()
     return redirect('/stats')
 
 
+@login_required(login_url='/login')
 def edit_attempt(request, pk):
     attempt = get_object_or_404(Attempt, pk=pk)
 
@@ -118,5 +128,40 @@ def edit_attempt(request, pk):
             recalculate_basic_stats(attempt.practice.pk)
             return redirect('/')
 
-    form = forms.EditAttemptForm(initial={'attempts': attempt.attempts, 'attempts_successful': attempt.attempts_successful})
+    form = forms.EditAttemptForm(
+        initial={'attempts': attempt.attempts, 'attempts_successful': attempt.attempts_successful})
     return render(request, 'attempt/edit_attempt.html', {'form': form, 'attempt': attempt})
+
+
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('/')
+
+    form = UserCreationForm
+    return render(request, 'auth/register.html', {'form': form})
+
+
+@login_required(login_url='/login')
+def logout_request(request):
+    logout(request)
+    return redirect('hoops:index')
+
+
+def login_request(request):
+
+    if request.method == 'POST':
+        form = AuthenticationForm(request, request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('hoops:index')
+
+    form = AuthenticationForm()
+    return render(request, 'auth/login.html', {'form': form})
