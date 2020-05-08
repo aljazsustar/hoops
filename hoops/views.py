@@ -75,9 +75,15 @@ def practice_detail(request, pk):
     attempts = Attempt.objects.filter(practice_id=pk)
     form = forms.PracticeForm(initial={'total_shots': basic_stats.total_shots, 'total_made': basic_stats.total_made})
     practice_form = forms.EditPracticeForm(initial={'date': p.date})
+    data = [a.attempts_successful for a in attempts]
+    labels = [i for i in range(1, len(attempts) + 1)]
+    js_data = {
+        'data': data,
+        'labels': labels
+    }
     return render(request, '../templates/practice_detail/practice_detail.html',
                   {'form': form, 'practice_form': practice_form,
-                   'practice': p, 'basic_stats': basic_stats, 'attempts': attempts})
+                   'practice': p, 'basic_stats': basic_stats, 'attempts': attempts, 'js_data': js_data})
 
 
 def update_practice(request, pk):
