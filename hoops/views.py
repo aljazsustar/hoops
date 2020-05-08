@@ -36,11 +36,13 @@ def practice(request):
 
             if len(practices) == 0:
                 new_practice = Practice()
+                new_practice.user_id = request.user.id
                 new_practice.save()
                 BasicStats(total_made=successful, total_shots=attempts, practice=new_practice).save()
                 new_attempt.practice = new_practice
             elif practices[0].date != timezone.now().date():
                 new_practice = Practice()
+                new_practice.user_id = request.user.id
                 new_practice.save()
                 BasicStats(total_made=successful, total_shots=attempts, practice=new_practice).save()
                 new_attempt.practice = new_practice
