@@ -3,9 +3,10 @@
 {% block content %}
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-9 col-sm-12">
-
+            <div class="col-md-8 col-sm-12">
+                <div id="attempts-chart" class="mt-4"></div>
             </div>
+        <div class="col-1"></div>
             <div class="col-md-3 col-sm-12">
                 <form action="{% url 'hoops:update_practice' practice.pk %}" method="post" class="form-inline ml-3">
                     {% csrf_token %}
@@ -39,4 +40,74 @@
             </div>
         </div>
     </div>
+    <script>
+        const data = {{ js_data|safe }};
+        let made = data['data']
+        let labels = data['labels']
+
+        var config = {
+            chart: {
+                type: 'bar',
+                height: 300
+            },
+            series: [{
+                name: 'Attempts made',
+                data: made
+            }],
+            plotOptions: {
+                bar: {
+                    dataLabels: {
+                        position: 'top', // top, center, bottom
+                    },
+                }
+            },
+            bar: {
+                horizontal: false
+            },
+            dataLabels: {
+                enabled: true,
+            },
+            xaxis: {
+                categories: labels,
+                position: 'top',
+                axisBorder: {
+                    show: false
+                },
+                axisTicks: {
+                    show: false
+                },
+                tooltip: {
+                    enabled: true
+                }
+            },
+            yaxis: {
+                max: (max) => {return max + (10 - (Math.max.apply(Math, made) % 10))},
+                axisBorder: {
+                    show: false
+                },
+                axisTicks: {
+                    show: false,
+                },
+            },
+            title: {
+                text: 'Makes per attempt',
+                floating: true,
+                align: 'center',
+                style: {
+                    color: '#444'
+                }
+            },
+            grid: {
+                padding: {
+                    top: 20
+                }
+            },
+        }
+
+        window.onload = () => {
+            let ctx = document.getElementById('attempts-chart')
+            let chart = new ApexCharts(ctx, config)
+            chart.render()
+        }
+    </script>
 {% endblock %}
