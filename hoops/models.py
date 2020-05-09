@@ -44,3 +44,4 @@ def recalculate_basic_stats(practice_id):
     basic_stats.total_made = total_made
     basic_stats.total_shots = total_shots
     basic_stats.save()
+    return BasicStats.objects.get(practice_id=practice_id)

@@ -39,6 +39,7 @@ def practice(request):
                 new_practice.save()
                 BasicStats(total_made=successful, total_shots=attempts, practice=new_practice).save()
                 new_attempt.practice = new_practice
+                new_attempt.save()
             elif practices[0].date != timezone.now().date():
                 new_practice = Practice()
                 new_practice.user_id = request.user.id
@@ -50,11 +51,11 @@ def practice(request):
                                             conditions=conditions['conditions'], humidity=conditions['humidity'],
                                             practice=new_practice)
                 weather.save()
+                new_attempt.save()
             else:
                 new_attempt.practice = practices[0]
+                new_attempt.save()
                 recalculate_basic_stats(practices[0].id)
-
-            new_attempt.save()
 
     form = forms.PracticeForm(initial={'total_shots': 10})
     return render(request, '../templates/practice/practice.html', {'form': form})
@@ -151,7 +152,6 @@ def logout_request(request):
 
 
 def login_request(request):
-
     if request.method == 'POST':
         form = AuthenticationForm(request, request.POST)
         if form.is_valid():
@@ -171,3 +171,14 @@ def user_profile(request):
     cities = Weather.get_cities()
     form = forms.EditUserForm
     return render(request, 'user/profile.html', {'cities': cities, 'form': form})
+
+
+@login_required(login_url='/login')
+def delete_attempt(request, pk):
+    to_delete = Attempt.objects.get(id=pk, practice__user_id=request.user.id)
+    to_delete.delete()
+    bs = recalculate_basic_stats(to_delete.practice.pk)
+    if bs.total_shots == 0:
+        p = Practice.objects.get(user_id=request.user.id)
+        p.delete()
+    return redirect('/stats')
