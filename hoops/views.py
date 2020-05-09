@@ -23,8 +23,7 @@ def index(request):
 
 @login_required(login_url='/login')
 def practice(request):
-    practices = Practice.objects.filter(user_id=request.user.id).order_by('-date')[:1]
-    basic_stats = BasicStats.objects.order_by('-practice__date')[:1]
+    practices = Practice.objects.filter(user_id=request.user.id, date=timezone.now().date())[:1]
 
     if request.method == 'POST':
         form = forms.PracticeForm(request.POST)
@@ -53,12 +52,10 @@ def practice(request):
                 weather.save()
             else:
                 new_attempt.practice = practices[0]
-                bs = basic_stats[0]
-                bs.total_made += successful
-                bs.total_shots += attempts
-                bs.save()
+                recalculate_basic_stats(practices[0].id)
 
             new_attempt.save()
+
     form = forms.PracticeForm(initial={'total_shots': 10})
     return render(request, '../templates/practice/practice.html', {'form': form})
 
@@ -167,3 +164,10 @@ def login_request(request):
 
     form = AuthenticationForm()
     return render(request, 'auth/login.html', {'form': form})
+
+
+@login_required(login_url='/login')
+def user_profile(request):
+    cities = Weather.get_cities()
+    form = forms.EditUserForm
+    return render(request, 'user/profile.html', {'cities': cities, 'form': form})

@@ -28,6 +28,10 @@ class WeatherConditions(models.Model):
     practice = models.ForeignKey(Practice, on_delete=models.CASCADE, default=1)
 
 
+class MyUser(User):
+    location = models.CharField(max_length=72)
+
+
 def recalculate_basic_stats(practice_id):
     basic_stats = BasicStats.objects.get(practice_id=practice_id)
     attempts = Attempt.objects.filter(practice_id=practice_id)
