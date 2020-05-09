@@ -35,7 +35,7 @@
         <div class="row">
             <div class="col-6"></div>
             <div class="col-6">
-                <div id="log-chart">
+                <div id="percent-chart">
                 </div>
             </div>
         </div>
@@ -104,11 +104,73 @@
             ],
         }
 
+
+        var percent_chart_config = {
+            chart: {
+                type: 'line',
+                height: 300
+            },
+            colors: ['#000000', '#9E0202'],
+            grid: {
+                padding: {
+                    bottom: 10
+                }
+            },
+            stroke: {
+                curve: 'straight'
+            },
+            series: [
+                {
+                    name: 'Linear',
+                    data: {{ p_data|safe }}
+                },
+                {
+                    name: 'Logarithmic',
+                    data: {{ p_data|safe }}
+                }],
+            xaxis: {
+                type: 'datetime'
+            },
+            toolbar: {
+                show: false
+            },
+            legend: {
+                position: 'bottom',
+                verticalAlign: 'left',
+                floating: false,
+            },
+            title: {
+                text: '% of shots made over time',
+                align: 'left'
+            },
+            dataLabels: {
+                enabled: true,
+                formatter: (val, opts) => val + '%'
+            },
+            yaxis: [
+                {
+                    min: 1,
+                    max: 100,
+                    seriesName: 'Linear',
+                    opposite: true
+                },
+                {
+                    min: 1,
+                    max: 100,
+                    seriesName: 'Logarithmic',
+                    logarithmic: true
+                }
+            ],
+        }
+
         window.onload = () => {
-            console.log(config.series)
+            console.log(percent_chart_config.series)
             const ctx = document.getElementById('basic_chart');
             const basic_chart = new ApexCharts(ctx, config)
+            const p_ctx = document.getElementById('percent-chart')
+            const p_chart = new ApexCharts(p_ctx, percent_chart_config)
             basic_chart.render()
+            p_chart.render()
         }
 
     </script>
