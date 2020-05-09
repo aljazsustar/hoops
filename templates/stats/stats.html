@@ -41,6 +41,13 @@
         </div>
     </div>>
     <script>
+
+        made = []
+
+        for (const d of {{ data|safe }}) {
+            made.push(d['y'])
+        }
+
         const config = {
             chart: {
                 type: 'line',
@@ -84,17 +91,15 @@
             yaxis: [
                 {
                     min: 1,
-                    max: 100,
-                    tickAmount: 10,
-                    seriesName: 'Logarithmic',
-                    logarithmic: true
+                    max: Math.max.apply(Math, made),
+                    seriesName: 'Linear',
+                    opposite: true
                 },
                 {
                     min: 1,
-                    max: 100,
-                    tickAmount: 10,
-                    seriesName: 'Linear',
-                    opposite: true
+                    max: Math.max.apply(Math, made),
+                    seriesName: 'Logarithmic',
+                    logarithmic: true
                 }
             ],
         }
