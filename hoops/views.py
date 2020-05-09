@@ -6,6 +6,7 @@ from django.utils import timezone
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
+import math
 
 
 @login_required(login_url='/login')
@@ -65,14 +66,18 @@ def practice(request):
 def stats(request):
     s = BasicStats.objects.filter(practice__user_id=request.user.id).order_by('practice__date')
     shots_data = []
-
+    percent_data = []
     for stat in s:
         date = stat.practice.date
         shots_data.append({
             'x': date.__str__(),
             'y': stat.total_made
         })
-    return render(request, '../templates/stats/stats.html', {'stats': s, 'data': shots_data})
+        percent_data.append({
+            'x': date.__str__(),
+            'y': int((stat.total_made / stat.total_shots) * 100)
+        })
+    return render(request, '../templates/stats/stats.html', {'stats': s, 'data': shots_data, 'p_data': percent_data})
 
 
 @login_required(login_url='/login')
