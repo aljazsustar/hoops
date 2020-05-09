@@ -34,3 +34,10 @@ class Weather:
 
             return {'temp': res['main']['temp'] - 273.15, 'conditions': res['weather'][0]['main'],
                     'humidity': res['main']['humidity'], 'wind_speed': res['wind']['speed']}
+
+    @staticmethod
+    def get_cities():
+        with open(os.path.join(BASE_DIR, 'hoops/city.list.json')) as json_file:
+            cities = json.load(json_file)
+
+        return [c['name'] for c in cities]
