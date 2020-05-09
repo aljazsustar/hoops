@@ -75,7 +75,7 @@ def stats(request):
         })
         percent_data.append({
             'x': date.__str__(),
-            'y': int((stat.total_made / stat.total_shots) * 100)
+            'y': int(round((stat.total_made / stat.total_shots) * 100))
         })
     return render(request, '../templates/stats/stats.html', {'stats': s, 'data': shots_data, 'p_data': percent_data})
 
