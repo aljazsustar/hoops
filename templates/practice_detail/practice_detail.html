@@ -26,8 +26,11 @@
                         <div class="card mt-4">
                             <div class="card-body mt-n2 mb-n2">
                                 <div class="row">
-                                    <div class="col-11">
+                                    <div class="col-10">
                                         <span class="h5">{{ forloop.counter }}: </span><span><b>{{ a.attempts_successful }}/{{ a.attempts }}</b></span>
+                                    </div>
+                                    <div class="col-1">
+                                        <a class="fa fa-times" href="{% url 'hoops:delete_attempt' a.id %}"></a>
                                     </div>
                                     <div class="col-1">
                                         <a class="fa fa-arrow-right" href="{% url 'hoops:edit_attempt' a.id %}"></a>
