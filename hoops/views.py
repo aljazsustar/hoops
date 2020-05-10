@@ -41,6 +41,11 @@ def practice(request):
                 BasicStats(total_made=successful, total_shots=attempts, practice=new_practice).save()
                 new_attempt.practice = new_practice
                 new_attempt.save()
+                conditions = Weather(location='ljubljana').get_current_conditions()
+                weather = WeatherConditions(temperature=conditions['temp'], wind_speed=conditions['wind_speed'],
+                                            conditions=conditions['conditions'], humidity=conditions['humidity'],
+                                            practice=new_practice)
+                weather.save()
             elif practices[0].date != timezone.now().date():
                 new_practice = Practice()
                 new_practice.user_id = request.user.id
@@ -180,10 +185,12 @@ def user_profile(request):
 
 @login_required(login_url='/login')
 def delete_attempt(request, pk):
+    attempt = get_object_or_404(Attempt, pk=pk)
     to_delete = Attempt.objects.get(id=pk, practice__user_id=request.user.id)
-    to_delete.delete()
     bs = recalculate_basic_stats(to_delete.practice.pk)
     if bs.total_shots == 0:
-        p = Practice.objects.get(user_id=request.user.id)
+        p = Practice.objects.filter(user_id=request.user.id, attempt=attempt)
         p.delete()
+    to_delete.delete()
+
     return redirect('/stats')
