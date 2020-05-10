@@ -73,6 +73,8 @@ def stats(request):
     shots_data = []
     percent_data = []
     for stat in s:
+        if stat.total_shots == 0:
+            stat.delete()
         date = stat.practice.date
         shots_data.append({
             'x': date.__str__(),
