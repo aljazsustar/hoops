@@ -32,16 +32,11 @@ class MyUser(User):
     location = models.CharField(max_length=72)
 
 
-def recalculate_basic_stats(practice_id):
+def recalculate_basic_stats(practice_id, attempt_id):
     basic_stats = BasicStats.objects.get(practice_id=practice_id)
-    attempts = Attempt.objects.filter(practice_id=practice_id)
-    total_made = 0
-    total_shots = 0
-    for a in attempts:
-        total_made += a.attempts_successful
-        total_shots += a.attempts
+    attempt = Attempt.objects.get(id=attempt_id)
 
-    basic_stats.total_made = total_made
-    basic_stats.total_shots = total_shots
+    basic_stats.total_made = attempt.attempts_successful
+    basic_stats.total_shots = attempt.attempts
     basic_stats.save()
     return BasicStats.objects.get(practice_id=practice_id)

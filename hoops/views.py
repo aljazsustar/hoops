@@ -195,7 +195,7 @@ def user_profile(request):
 def delete_attempt(request, pk):
     attempt = get_object_or_404(Attempt, pk=pk)
     to_delete = Attempt.objects.get(id=pk, practice__user_id=request.user.id)
-    bs = recalculate_basic_stats(to_delete.practice.pk)
+    bs = recalculate_basic_stats(to_delete.practice.pk, pk)
     if bs.total_shots == 0:
         p = Practice.objects.filter(user_id=request.user.id, attempt=attempt)
         p.delete()
