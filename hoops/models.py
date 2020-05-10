@@ -36,7 +36,17 @@ def recalculate_basic_stats(practice_id, attempt_id):
     basic_stats = BasicStats.objects.get(practice_id=practice_id)
     attempt = Attempt.objects.get(id=attempt_id)
 
-    basic_stats.total_made = attempt.attempts_successful
-    basic_stats.total_shots = attempt.attempts
+    basic_stats.total_made += attempt.attempts_successful
+    basic_stats.total_shots += attempt.attempts
+    basic_stats.save()
+    return BasicStats.objects.get(practice_id=practice_id)
+
+
+def recalculate_basic_stats_on_delete(practice_id, attempt_id):
+    basic_stats = BasicStats.objects.get(practice_id=practice_id)
+    attempt = Attempt.objects.get(id=attempt_id)
+
+    basic_stats.total_made -= attempt.attempts_successful
+    basic_stats.total_shots -= attempt.attempts
     basic_stats.save()
     return BasicStats.objects.get(practice_id=practice_id)
