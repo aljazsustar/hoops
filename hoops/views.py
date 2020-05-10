@@ -65,7 +65,7 @@ def practice(request):
             else:
                 new_attempt.practice = practices[0]
                 new_attempt.save()
-                recalculate_basic_stats(practices[0].id)
+                recalculate_basic_stats(practices[0].id, new_attempt.pk)
 
     form = forms.PracticeForm(initial={'total_shots': 10})
     return render(request, '../templates/practice/practice.html', {'form': form})
@@ -143,7 +143,7 @@ def edit_attempt(request, pk):
             attempt.attempts_successful = attempts_successful
             attempt.attempts = attempts
             attempt.save()
-            recalculate_basic_stats(attempt.practice.pk)
+            recalculate_basic_stats(attempt.practice.pk, attempt.pk)
             return redirect('/')
 
     form = forms.EditAttemptForm(
