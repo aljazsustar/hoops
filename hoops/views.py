@@ -14,7 +14,11 @@ def index(request):
     practices = Practice.objects.filter(user_id=request.user.id)
     basic_stats = []
     for p in practices:
-        stat = BasicStats.objects.get(practice_id=p.id) if BasicStats.objects.filter(practice_id=p.id).exists() else p.delete()
+        if BasicStats.objects.filter(practice_id=p.id).exists():
+            stat = BasicStats.objects.get(practice_id=p.id)
+        else:
+            p.delete()
+            continue
         weather = WeatherConditions.objects.get(practice_id=p.id) if WeatherConditions.objects.filter(
             practice_id=p.id).exists() else None
         basic_stats.append({'practice': p, 'basic_stats': stat, 'weather': weather})
