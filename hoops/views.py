@@ -1,11 +1,13 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from . import forms
-from .models import Attempt, Practice, BasicStats, WeatherConditions, recalculate_basic_stats, recalculate_basic_stats_on_delete
+from .models import Attempt, Practice, BasicStats, WeatherConditions, recalculate_basic_stats, \
+    recalculate_basic_stats_on_delete
 from .openweather import Weather
 from django.utils import timezone
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
+from .calculactions import Statistics
 
 
 @login_required(login_url='/login')
@@ -203,3 +205,16 @@ def delete_attempt(request, pk):
     to_delete.delete()
 
     return redirect('/stats')
+
+
+@login_required(login_url='/login')
+def advanced(request):
+    advanced_stats = Statistics(request.user.id)
+    pearson = Statistics(request.user.id).correlation()[0] \
+        if Statistics(request.user.id).correlation()[0] is not None else None
+
+    data = []
+    for (w, s) in zip(advanced_stats.wind_speeds, advanced_stats.shots_made):
+        data.append({'x': w, 'y': s})
+    print(data)
+    return render(request, 'stats/advanced.html', {'correlation': pearson, 'data': data})
