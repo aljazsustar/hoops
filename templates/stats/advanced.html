@@ -1,0 +1,79 @@
+{% extends 'index/index.html' %}
+{% block content %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-6">
+                {% if correlation != None %}
+                    {% if correlation < 0 %}
+                        <span class="h5">Wind speed and made shots are related: as the wind speed increases, made shots decrease</span>
+                    {% endif %}
+                    {% if correlation > 0 %}
+                        <span class="h5">Wind speed and made shots are related: as the wind speed increases, made shots increase</span>
+                    {% endif %}
+                    {% if correlation == 0 %}
+                        <span class="h5">Wind speed and made shots are not related</span>
+                    {% endif %}
+                {% else %}
+                    <span class="h5">Insufficient data for correlation coefficient calculation: at least 2 practices required</span>
+                {% endif %}
+            </div>
+            <div class="col-6">
+                <div id="correlation-chart"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        var correlation_config = {
+            chart: {
+                type: 'line',
+                height: 300
+            },
+            grid: {
+                padding: {
+                    bottom: 10,
+                    left: 50
+                }
+            },
+            stroke: {
+                curve: 'straight'
+            },
+            series: [
+                {
+                    name: 'Correlation',
+                    data: {{ data|safe }}
+                }],
+            xaxis: {
+                type: 'number'
+            },
+            toolbar: {
+                show: false
+            },
+            legend: {
+                position: 'bottom',
+                verticalAlign: 'left',
+                floating: false,
+            },
+            title: {
+                text: 'Correlation between wind speed (x axis) and shots made (y axis)',
+                align: 'center'
+            },
+            dataLabels: {
+                enabled: true,
+            },
+            yaxis: [
+                {
+                    min: 1,
+                    max: 100,
+                    seriesName: 'Correlation',
+                    opposite: true
+                }
+            ],
+        }
+
+        window.onload = () => {
+            const ctx = document.getElementById('correlation-chart');
+            const correlation_chart = new ApexCharts(ctx, correlation_config)
+            correlation_chart.render()
+        }
+    </script>
+{% endblock %}
