@@ -9,12 +9,14 @@ class Statistics:
     def __init__(self, user_id):
         self.user_id = user_id
         self.shots_made, self.wind_speeds = [], []
-        self.practices = Practice.objects.filter(user_id=user_id)
+        self.practices = Practice.objects.filter(user_id=user_id).order_by('date')
+        self.weather = WeatherConditions.objects.all().order_by('wind_speed')
+        self.basic_stats = BasicStats.objects.all().order_by('practice__weatherconditions__wind_speed')
 
-        for p in self.practices:
+        for w in self.weather:
             try:
-                self.wind_speeds.append(WeatherConditions.objects.get(practice_id=p.id).wind_speed)
-                self.shots_made.append(BasicStats.objects.get(practice_id=p.id).total_made)
+                self.wind_speeds.append(w.wind_speed)
+                self.shots_made.append(self.basic_stats.get(practice_id=w.practice.id).total_made)
             except ObjectDoesNotExist:
                 continue
 
