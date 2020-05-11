@@ -6,13 +6,14 @@ from django.utils import timezone
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
-import math
+from .calculactions import Statistics
 
 
 @login_required(login_url='/login')
 def index(request):
     practices = Practice.objects.filter(user_id=request.user.id)
     basic_stats = []
+    print(Statistics(request.user.id).correlation())
     for p in practices:
         if BasicStats.objects.filter(practice_id=p.id).exists():
             stat = BasicStats.objects.get(practice_id=p.id)
@@ -41,6 +42,7 @@ def practice(request):
             if len(practices) == 0:
                 new_practice = Practice()
                 new_practice.user_id = request.user.id
+                new_practice.date = timezone.now().date()
                 new_practice.save()
                 BasicStats(total_made=successful, total_shots=attempts, practice=new_practice).save()
                 new_attempt.practice = new_practice
@@ -53,6 +55,7 @@ def practice(request):
             elif practices[0].date != timezone.now().date():
                 new_practice = Practice()
                 new_practice.user_id = request.user.id
+                new_practice.date = timezone.now().date()
                 new_practice.save()
                 BasicStats(total_made=successful, total_shots=attempts, practice=new_practice).save()
                 new_attempt.practice = new_practice

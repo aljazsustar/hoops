@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 
 class Practice(models.Model):
-    date = models.DateField(default=timezone.now().date())
+    date = models.DateField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
