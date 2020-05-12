@@ -10,7 +10,7 @@
                         {{ field.label_tag }}
                         {{ field|add_class:'form-control' }}
                         {% for e in field.errors %}
-                            <div class="text-danger">{{ e }}</div>
+                            <p class="text-danger">{{ e }}</p>
                         {% endfor %}
                     </div>
                 {% endfor %}
