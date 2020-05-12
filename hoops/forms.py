@@ -1,6 +1,7 @@
 from django.forms import ModelForm
-from .models import Attempt, Practice, BasicStats, MyUser
+from .models import Attempt, Practice, BasicStats
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
+from django.contrib.auth.models import User
 
 
 class PracticeForm(ModelForm):
@@ -21,13 +22,13 @@ class EditAttemptForm(ModelForm):
         fields = ['attempts_successful', 'attempts']
 
 
-class EditUserForm(UserChangeForm):
+class EditUserForm(UserCreationForm):
     class Meta:
-        model = MyUser
-        fields = ['username', 'email', 'location']
+        model = User
+        fields = ['username', 'first_name', 'last_name', 'email']
 
 
 class RegistrationForm(UserCreationForm):
     class Meta:
-        model = MyUser
+        model = User
         fields = ['username', 'email']
