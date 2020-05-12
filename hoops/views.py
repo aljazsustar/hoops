@@ -5,6 +5,7 @@ from .models import Attempt, Practice, BasicStats, WeatherConditions, recalculat
 from .openweather import Weather
 from django.utils import timezone
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from .calculactions import Statistics
@@ -156,13 +157,13 @@ def edit_attempt(request, pk):
 
 def register(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = forms.RegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
             return redirect('hoops:index')
 
-    form = UserCreationForm
+    form = forms.RegistrationForm
     return render(request, 'auth/register.html', {'form': form})
 
 
@@ -190,7 +191,14 @@ def login_request(request):
 @login_required(login_url='/login')
 def user_profile(request):
     cities = Weather.get_cities()
-    form = forms.EditUserForm
+    user = request.user
+    to_edit = User.objects.get(id=user.id)
+    if request.method == 'POST':
+        form = forms.EditUserForm(request.POST)
+        if form.is_valid():
+            form.save()
+
+    form = forms.EditUserForm(initial={'email': user.email, 'username': user.username})
     return render(request, 'user/profile.html', {'cities': cities, 'form': form})
 
 

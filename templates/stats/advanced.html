@@ -5,16 +5,18 @@
             <div class="col-6 d-flex align-items-center">
                 {% if correlation != None %}
                     {% if correlation < 0 %}
-                        <span class="h5">Wind speed and made shots are related: as the wind speed increases, made shots decrease</span>
+                        <span class="h5">Wind speed and made shots are related: as the wind speed increases, made shots decrease <br><span
+                                class="small"> Pearce correlation factor: {{ correlation }}</span></span>
                     {% endif %}
                     {% if correlation > 0 %}
-                        <span class="h5">Wind speed and made shots are related: as the wind speed increases, made shots increase</span>
+                        <span class="h5">Wind speed and made shots are related: as the wind speed increases, made shots increase <br><span
+                                class="small">Pearce correlation factor: {{ correlation }}</span></span>
                     {% endif %}
                     {% if correlation == 0 %}
-                        <span class="h5">Wind speed and made shots are not related</span>
+                        <span class="h5">Wind speed and made shots are not related <br><span class="small">Pearce correlation factor: {{ correlation }}</span></span>
                     {% endif %}
                 {% else %}
-                    <span class="h5">Insufficient data for correlation coefficient calculation: at least 2 practices required</span>
+                    <span class="h5">Insufficient data for correlation coefficient calculation: at least 2 practices required </span>
                 {% endif %}
             </div>
             <div class="col-6">
