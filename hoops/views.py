@@ -13,8 +13,8 @@ from .calculactions import Statistics
 
 @login_required(login_url='/login')
 def index(request):
-    conditions = Weather(location='ljubljana').get_current_conditions()
-    advanced_stats = Statistics(request.user.id)
+   # conditions = Weather(location='ljubljana').get_current_conditions()
+   # advanced_stats = Statistics(request.user.id)
     practices = Practice.objects.filter(user_id=request.user.id)
     basic_stats = []
     for p in practices:
@@ -26,8 +26,8 @@ def index(request):
         weather = WeatherConditions.objects.get(practice_id=p.id) if WeatherConditions.objects.filter(
             practice_id=p.id).exists() else None
         basic_stats.append({'practice': p, 'basic_stats': stat, 'weather': weather})
-        predicted = int(advanced_stats.predict(conditions['wind_speed'], conditions['temp'], conditions['humidity']))
-    return render(request, '../templates/index/index.html', {'stats': basic_stats, 'predicted': predicted})
+        #predicted = int(advanced_stats.predict(conditions['wind_speed'], conditions['temp'], conditions['humidity']))
+    return render(request, '../templates/index/index.html', {'stats': basic_stats})
 
 
 @login_required(login_url='/login')
