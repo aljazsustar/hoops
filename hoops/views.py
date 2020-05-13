@@ -191,14 +191,13 @@ def login_request(request):
 @login_required(login_url='/login')
 def user_profile(request):
     cities = Weather.get_cities()
-    user = request.user
-    to_edit = User.objects.get(id=user.id)
+    user = User.objects.get(pk=request.user.id)
     if request.method == 'POST':
         form = forms.EditUserForm(request.POST)
         if form.is_valid():
-            form.save()
+            form.save(commit=False)
 
-    form = forms.EditUserForm(initial={'email': user.email, 'username': user.username})
+    form = forms.EditUserForm(initial={'email': user.email, 'username': user.username}, instance=user)
     return render(request, 'user/profile.html', {'cities': cities, 'form': form})
 
 
