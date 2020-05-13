@@ -26,11 +26,8 @@ class WeatherConditions(models.Model):
     conditions = models.CharField(max_length=127)
     humidity = models.IntegerField()
     practice = models.ForeignKey(Practice, on_delete=models.CASCADE, default=1)
-
-
-class MyUser(User):
-    location = models.CharField(max_length=72)
-
+    location = models.CharField(max_length=80)
+    
 
 def recalculate_basic_stats(practice_id, attempt_id):
     basic_stats = BasicStats.objects.get(practice_id=practice_id)
