@@ -2,6 +2,7 @@ from scipy.stats import pearsonr
 from .models import BasicStats, Practice, User, WeatherConditions
 from django.core.exceptions import ObjectDoesNotExist
 from sklearn import linear_model
+import numpy as np
 import math
 
 
@@ -30,7 +31,7 @@ class Statistics:
         wind_speeds = [w.wind_speed for w in self.weather]
         temps = [w.temperature for w in self.weather]
         humidity = [w.humidity for w in self.weather]
-        x = [list(wind_speeds), list(temps), list(humidity)]
+        x = list(list(wind_speeds), list(temps), list(humidity))
         y = [s.total_made for s in self.basic_stats]
         regr = linear_model.LinearRegression()
         regr.fit(x, y)
