@@ -28,10 +28,7 @@ class Statistics:
                 float(pearsonr(self.wind_speeds, self.shots_made)[0])) else None
 
     def predict(self, w, t, h):
-        wind_speeds = [w.wind_speed for w in self.weather]
-        temps = [w.temperature for w in self.weather]
-        humidity = [w.humidity for w in self.weather]
-        x = list(list(wind_speeds), list(temps), list(humidity))
+        x = [[we.wind_speed, we.temperature, we.humidity] for we in self.weather]
         y = [s.total_made for s in self.basic_stats]
         regr = linear_model.LinearRegression()
         regr.fit(x, y)
