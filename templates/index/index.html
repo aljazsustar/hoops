@@ -51,36 +51,46 @@
 {% block content %}
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'hoops/index.css' %}">
-    <div class="container">
-        {% for stat in stats %}
-            <div class="card mb-2">
-                <div class="card-body mb-n4">
-                    <div class="row">
-                        <div class="col-2">
-                            <h5 class="title">{{ stat.practice.date }}</h5>
-                        </div>
-                        <div class="col-9"></div>
-                        <div class="col-1">
-                            <a class="fa fa-arrow-right" href="{% url 'hoops:practice_detail' stat.practice.id %}"></a>
-                        </div>
-                    </div>
-                    <div class="row mt-1">
-                        <div class="col-2">
-                            <p class="small"><b>{{ stat.basic_stats.total_made }}
-                                / {{ stat.basic_stats.total_shots }}</b></p>
-                        </div>
-                        <div class="col-8 text-center">
-                            {% if stat.weather %}
-                                <span class="small mr-2 weather"><b>{{ stat.weather.temperature }}°C</b></span>
-                                <span class="small mr-2 weather"><b>{{ stat.weather.conditions }}</b></span>
-                                <span class="small mr-2 weather"><b>Wind: {{ stat.weather.wind_speed }} m/s</b></span>
-                                <span class="small mr-2 weather"><b>Humidity: {{ stat.weather.humidity }}%</b></span>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-4">
+                <span class="h5">
+                    Based on current weather conditions, you will make around {{ predicted }} shots, if you practice now.
+                </span>
             </div>
-        {% endfor %}
+            <div class="col-8">
+                {% for stat in stats %}
+                    <div class="card mb-2">
+                        <div class="card-body mb-n4">
+                            <div class="row">
+                                <div class="col-2">
+                                    <h5 class="title">{{ stat.practice.date }}</h5>
+                                </div>
+                                <div class="col-9"></div>
+                                <div class="col-1">
+                                    <a class="fa fa-arrow-right"
+                                       href="{% url 'hoops:practice_detail' stat.practice.id %}"></a>
+                                </div>
+                            </div>
+                            <div class="row mt-1">
+                                <div class="col-2">
+                                    <p class="small"><b>{{ stat.basic_stats.total_made }}
+                                        / {{ stat.basic_stats.total_shots }}</b></p>
+                                </div>
+                                <div class="col-8 text-center">
+                                    {% if stat.weather %}
+                                        <span class="small mr-2 weather"><b>{{ stat.weather.temperature }}°C</b></span>
+                                        <span class="small mr-2 weather"><b>{{ stat.weather.conditions }}</b></span>
+                                        <span class="small mr-2 weather"><b>Wind: {{ stat.weather.wind_speed }} m/s</b></span>
+                                        <span class="small mr-2 weather"><b>Humidity: {{ stat.weather.humidity }}%</b></span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
     </div>
 {% endblock %}
 </body>

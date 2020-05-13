@@ -1,6 +1,7 @@
 from scipy.stats import pearsonr
 from .models import BasicStats, Practice, User, WeatherConditions
 from django.core.exceptions import ObjectDoesNotExist
+from sklearn import linear_model
 import math
 
 
@@ -11,7 +12,7 @@ class Statistics:
         self.shots_made, self.wind_speeds = [], []
         self.practices = Practice.objects.filter(user_id=user_id).order_by('date')
         self.weather = WeatherConditions.objects.all().order_by('wind_speed')
-        self.basic_stats = BasicStats.objects.all().order_by('practice__weatherconditions__wind_speed')
+        self.basic_stats = BasicStats.objects.filter(practice__weatherconditions__conditions__isnull=False).order_by('practice__weatherconditions__wind_speed')
 
         for w in self.weather:
             try:
@@ -24,3 +25,14 @@ class Statistics:
         if len(self.shots_made) > 1 and len(self.wind_speeds) > 1:
             return pearsonr(self.wind_speeds, self.shots_made) if not math.isnan(
                 float(pearsonr(self.wind_speeds, self.shots_made)[0])) else None
+
+    def predict(self, w, t, h):
+        wind_speeds = [w.wind_speed for w in self.weather]
+        temps = [w.temperature for w in self.weather]
+        humidity = [w.humidity for w in self.weather]
+        x = [list(wind_speeds), list(temps), list(humidity)]
+        y = [s.total_made for s in self.basic_stats]
+        regr = linear_model.LinearRegression()
+        regr.fit(x, y)
+        predicted = regr.predict([[w, t, h]])
+        return predicted
